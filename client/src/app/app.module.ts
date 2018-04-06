@@ -6,14 +6,16 @@ import { HttpModule } from '@angular/http';
 import { routing, appRoutingProviders } from './app.routing';
 
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login.component';
+import { LogInComponent } from './components/login.component';
 import { NewUserComponent } from './components/new_user.component';
+import { ChatComponent } from './components/chat.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    NewUserComponent
+    LogInComponent,
+    NewUserComponent,
+    ChatComponent
   ],
 
   imports: [

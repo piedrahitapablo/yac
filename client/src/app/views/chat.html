@@ -1,0 +1,65 @@
+<div class="col-lg-12 container">
+	<div class="row">
+		<div class="page-header">
+			<h1>{{title}} - User: {{username}}</h1>
+		</div>
+	</div>
+
+	<div class="row users">
+		<div class="col-lg-12">
+			<p>
+				<strong>Online users:</strong>
+			</p>
+			<div *ngFor="let user of users" class="user">
+				<span class="label label-info">{{user.username}}</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<strong>Messages:</strong>
+		</div>
+	</div>
+
+	<div class="row messages">
+		<div class="col-lg-12">
+			<!--
+			<p>
+				<strong>Messages:</strong>
+			</p>
+
+			<hr>
+			-->
+
+			<div *ngFor="let msg of messages" class="message">
+				<p *ngIf="msg.id_message > 0">
+					<strong>{{msg.username}} [{{msg.msg_time}}]:</strong> {{msg.message}}
+				</p>
+
+				<p *ngIf="msg.id_message == -1" style="color: green;">
+					<strong>[{{msg.msg_time}}]:</strong> {{msg.message}}
+				</p>
+
+				<p *ngIf="msg.id_message == -2" style="color: red;">
+					<strong>[{{msg.msg_time}}]:</strong> {{msg.message}}
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<form #messageForm="ngForm" (ngSubmit)="sendMessage()" class="form-inline message-form">
+				<div class="form-group">
+					<label for="message">Message:</label>
+					<input type="text" name="message" class="form-control" [(ngModel)]="curr_message" required autocomplete="off">
+				</div>
+
+				<input type="submit" value="Send" class="btn btn-success" [disabled]="!messageForm.form.valid">
+			</form>
+
+			<button class="btn btn-danger" (click)="logOut()">Log out</button>
+		</div>
+	</div>
+</div>

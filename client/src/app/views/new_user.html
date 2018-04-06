@@ -1,32 +1,35 @@
 <div class="col-lg-12 container">
-	<h1>{{title}}</h1>
+	<div class="page-header">
+		<h1>{{title}}</h1>
+	</div>
 
 	<br>
 
-	<form #loginForm="ngForm" (ngSubmit)="login()">
+	<form #newUserForm="ngForm" (ngSubmit)="onSubmit()">
 		<div class="form-group">
-			<label for="username">Username:</label>
-			<input type="text" name="username" class="form-control" [(ngModel)]="username" required>
+			<label for="username">Username (1-16 alphanumeric characters):</label>
+			<span class="label label-danger" *ngIf="userExists">Username not available!</span>
+			<input type="text" name="username" class="form-control" [(ngModel)]="username" required pattern="^[a-zA-Z0-9]{1,16}">
 		</div>
 
 		<div class="form-group">
-			<label for="password">Password:</label>
-			<input type="password" name="password" class="form-control" [(ngModel)]="password" required>
+			<label for="password">Password (6-45 alphanumeric characters):</label>
+			<input type="password" name="password" class="form-control" [(ngModel)]="password" required pattern="^[a-zA-Z0-9]{6,45}">
 		</div>
 
 		<div class="form-group">
 			<label for="password2">Repeat your password:</label>
-			<input type="password" name="password2" class="form-control" [(ngModel)]="password2" required>
+			<span class="label label-danger" *ngIf="passwordsDoNotMatch">Passwords do not match!</span>
+			<input type="password" name="password2" class="form-control" [(ngModel)]="password2" required pattern="^[a-zA-Z0-9]{6,45}">
 		</div>
 
 		<div class="form-group">
-			<input type="submit" value="Create user" class="btn btn-success">
+			<input type="submit" value="Create user" class="btn btn-success" [disabled]="!newUserForm.form.valid">
+		</div>
+
+		<div class="form-group">
+			<p>Already have an account?</p>
+			<a [routerLink]="['/login']" class="btn btn-primary">Log in</a>
 		</div>
 	</form>
-
-	{{username}}
-	-
-	{{password}}
-	-
-	{{password2}}
 </div>
