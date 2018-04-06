@@ -6,13 +6,16 @@ import { Message } from '../models/message'
 
 import { UserService } from '../services/user.service';
 import { MessageService } from '../services/message.service';
+import { YoutubeService } from '../services/youtube.service';
+
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { GLOBAL } from '../services/global';
 
 @Component({
 	selector: 		'chat',
 	templateUrl:	'../views/chat.html',
-	providers:		[UserService, MessageService]
+	providers:		[UserService, MessageService, YoutubeService]
 })
 
 /*
@@ -36,7 +39,9 @@ export class ChatComponent {
 		private _route: ActivatedRoute,
 		private _router: Router,
 		private _userService: UserService,
-		private _messageService: MessageService
+		private _messageService: MessageService,
+		private _youtubeService: YoutubeService,
+		private _sanitizer: DomSanitizer
 	) {
 		this.title = 'Chat';
 
@@ -183,11 +188,82 @@ export class ChatComponent {
 	* function to perform the send message action, emits a message-melt event
 	*/
 	sendMessage() {
-		//emits the message event
-		let msg = new Message(0, this.curr_message, this.username, '');
-		this.socket.emit('message-melt', msg);
+		let msg: Message;
+		//checks the message for youtube videos, the format is: /youtube song_name/artist
+		let msg_info = this.checkYoutube(this.curr_message);
+		console.log(msg_info);
+
+		if (msg_info[0]) {
+			//sets the song name and artist
+			let videoQuery = msg_info[1] + '+' + msg_info[2];
+
+			//changes all the spaces for +
+			videoQuery.replace(/ /g, '+');
+
+			//performs the GET request to get the first video id
+			this._youtubeService.getVideo(videoQuery).subscribe(
+				res => {
+					//gets the first video id
+					let id = res.items[0].id.videoId;
+					msg = new Message(0, '/youtube: ' + id, this.username, '');
+
+					//emits the message event
+					this.socket.emit('message-melt', msg);
+				},
+				error => {
+					console.log(<any> error);
+				}
+			);
+		} else {
+			msg = new Message(0, this.curr_message, this.username, '');
+
+			//emits the message event
+			this.socket.emit('message-melt', msg);
+		}
 
 		//clears the current message
 		this.curr_message = '';
+	}
+
+	/*
+	* function to check the message string for youtube videos using the format:
+	* 		/youtube song_name/artist
+	* returns an array with the following structure:
+	*		[matches (boolean), songname, artist]
+	*/
+	checkYoutube(msg: string) {
+		let reg_exp = /\/youtube (.*)\/(.*)$$/;
+
+		let matches = reg_exp.test(msg);
+		let info = [];
+		if (matches) {
+			info = reg_exp.exec(msg);
+		} else {
+			info = ['', '']
+		}
+
+		return [matches, info[1], info[2]];
+	}
+
+	/*
+	* function to check the received messages for youtube ids
+	*/
+	checkReceivedMessage(msg: string) {
+		let reg_exp = /^\/youtube: .*$/;
+
+		return reg_exp.test(msg);
+	}
+
+	/*
+	* gets a safe embed url for youtube videos
+	*/
+	getEmbedUrl(msg: string) {
+		let reg_exp = /^\/youtube: (.*)$/;
+		let id = reg_exp.exec(msg);
+
+		let videoUrl = 'https://www.youtube.com/embed/' + id[1];
+		let sanitizedUrl = this._sanitizer.bypassSecurityTrustResourceUrl(videoUrl);
+
+		return sanitizedUrl;
 	}
 }

@@ -24,18 +24,16 @@
 
 	<div class="row messages">
 		<div class="col-lg-12">
-			<!--
-			<p>
-				<strong>Messages:</strong>
-			</p>
-
-			<hr>
-			-->
-
 			<div *ngFor="let msg of messages" class="message">
-				<p *ngIf="msg.id_message > 0">
+				<p *ngIf="msg.id_message > 0 && !checkReceivedMessage(msg.message)">
 					<strong>{{msg.username}} [{{msg.msg_time}}]:</strong> {{msg.message}}
 				</p>
+
+				<div *ngIf="msg.id_message > 0 && checkReceivedMessage(msg.message)">
+					<strong>{{msg.username}} [{{msg.msg_time}}]:</strong>
+
+					<iframe width="250" height="141" [src]="msg.message | youtubeEmbed" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+				</div>
 
 				<p *ngIf="msg.id_message == -1" style="color: green;">
 					<strong>[{{msg.msg_time}}]:</strong> {{msg.message}}

@@ -10,12 +10,15 @@ import { LogInComponent } from './components/login.component';
 import { NewUserComponent } from './components/new_user.component';
 import { ChatComponent } from './components/chat.component'
 
+import { YoutubePipe } from './services/youtube.pipe';
+
 @NgModule({
   declarations: [
     AppComponent,
     LogInComponent,
     NewUserComponent,
-    ChatComponent
+    ChatComponent,
+    YoutubePipe
   ],
 
   imports: [
