@@ -1,3 +1,6 @@
+/*
+* Message model
+*/
 export class Message {
 	constructor(
 		public id_message: number,

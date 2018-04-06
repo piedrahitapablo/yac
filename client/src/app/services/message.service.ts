@@ -8,9 +8,13 @@ import { GLOBAL } from './global';
 
 @Injectable()
 
+/*
+* Message service
+*/
 export class MessageService {
 	public url: string;
 
+	//global constants
 	private _ALL_MESSAGES: string;
 
 	constructor(
@@ -21,6 +25,9 @@ export class MessageService {
 		this._ALL_MESSAGES = 'messages';
 	}
 
+	/*
+	* function to get the message history
+	*/
 	getMessageHistory() {
 		let getUrl = this.url + this._ALL_MESSAGES;
 

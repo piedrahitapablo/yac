@@ -81,7 +81,6 @@ parser.add_argument('user')
 parser.add_argument('pass')
 
 #login
-########### FALTA EMITIR LOGIN A SOCKETIO
 class LogIn(Resource):
 	def get(self):
 		#gets the arguments
@@ -131,7 +130,6 @@ class LogIn(Resource):
 			return res, 200
 
 #logout
-########### FALTA EMITIR LOGIN A SOCKETIO
 class LogOut(Resource):
 	def get(self):
 		#gets the arguments
@@ -254,14 +252,17 @@ app.config['SECRET_KEY'] = 'mykey'
 
 socketio = SocketIO(app)
 
+#connection event
 @socketio.on('connect')
 def handleConnect():
-	print('user connected')
+	pass
 
+#disconnection event
 @socketio.on('disconnect')
 def handleDisconnect():
 	pass
 
+#message-melt event, used for messages
 @socketio.on('message-melt')
 def handleMessage(msg):
 	#inserts the message into the db
@@ -269,6 +270,7 @@ def handleMessage(msg):
 	db.session.add(message)
 	db.session.commit()
 
+	#creates a dictionary for the message
 	msg_json = {
 		'id_message': message.id_message,
 		'message': message.message,
@@ -276,12 +278,13 @@ def handleMessage(msg):
 		'msg_time': message.msg_time.strftime("%Y-%m-%d %H:%M:%S")
 	}
 
-	print(msg_json)
-
+	#broadcasts the message
 	emit('message-melt', msg_json, broadcast=True)
 
+#session-melt event, used for session status
 @socketio.on('session-melt')
 def handleLogIn(msg):
+	#creates a dictionary for the message
 	msg = {
 		'id_message': msg['id_message'],
 		'message': msg['message'],
@@ -289,8 +292,7 @@ def handleLogIn(msg):
 		'msg_time': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 	}
 
-	print(msg)
-
+	#broadcasts the login or logout event
 	emit('session-melt', msg, broadcast=True)
 
 ################################################################################
