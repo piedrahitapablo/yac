@@ -103,7 +103,7 @@ export class ChatComponent {
 		let decodedCookie = decodeURIComponent(document.cookie);
 		let ca = decodedCookie.split(';');
 
-		for(let i = 0; i <ca.length; i++) {
+		for(let i = 0; i < ca.length; i++) {
 			let c = ca[i];
 			while (c.charAt(0) == ' ') {
 				c = c.substring(1);
@@ -232,10 +232,11 @@ export class ChatComponent {
 	*		[matches (boolean), songname, artist]
 	*/
 	checkYoutube(msg: string) {
-		let reg_exp = /\/youtube (.*)\/(.*)$$/;
+		let reg_exp = /^\/youtube (.*)\/(.*)$/;
 
 		let matches = reg_exp.test(msg);
 		let info = [];
+		
 		if (matches) {
 			info = reg_exp.exec(msg);
 		} else {
